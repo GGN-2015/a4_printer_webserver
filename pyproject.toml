@@ -1,0 +1,26 @@
+[project]
+name = "a4-printer-webserver"
+version = "0.1.0"
+description = "A password-protected Flask and WebSocket frontend for a4-printer-interface"
+authors = [
+    {name = "GGN_2015",email = "neko@jlulug.org"}
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "a4-printer-interface",
+    "Flask>=3.1,<4.0",
+    "flask-sock>=0.7,<1.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["a4_printer_webserver*"]
+
+[tool.setuptools.package-data]
+a4_printer_webserver = ["templates/*.html", "static/*.css", "static/*.js"]
+
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"

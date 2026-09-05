@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="identity">
+          <div class="brand-mark small" aria-hidden="true">A4</div>
+          <h1>{{ title }}</h1>
+        </div>
+        <div class="header-actions">
+          <div class="printer-status" aria-live="polite">
+            <span class="status-light disconnected" id="status-light"></span>
+            <span id="status-label" data-i18n="connecting">Connecting</span>
+          </div>
+          <button
+            type="button"
+            class="quiet pause-control"
+            id="pause-printing"
+            aria-pressed="false"
+            data-i18n="pausePrinting"
+          >Pause printing</button>
+          <div class="language-switch compact" role="group" aria-label="Language">
+            <button type="button" data-lang="en">EN</button>
+            <button type="button" data-lang="zh">中文</button>
+          </div>
+          <button type="button" class="quiet" id="logout" data-i18n="logout">Log out</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="upload-section" aria-labelledby="upload-title">
+        <div class="section-heading has-action">
+          <div>
+            <h2 id="upload-title" data-i18n="newDocument">New document</h2>
+            <p data-i18n="fileTypes">PDF, PNG, JPEG, TIFF, BMP, WebP or GIF</p>
+          </div>
+          <button type="button" class="quiet" id="test-page-button" data-i18n="printTestPage">
+            Print test page
+          </button>
+        </div>
+        <form id="upload-form" class="upload-form">
+          <label class="file-picker" for="file-input">
+            <span class="file-symbol" aria-hidden="true">+</span>
+            <span id="file-label" data-i18n="chooseFile">Choose a file</span>
+          </label>
+          <input
+            id="file-input"
+            name="file"
+            type="file"
+            accept="application/pdf,image/png,image/jpeg,image/tiff,image/bmp,image/webp,image/gif"
+            required
+          >
+          <button type="submit" class="primary" id="upload-button" data-i18n="upload">Upload</button>
+        </form>
+      </section>
+
+      <section class="jobs-section" aria-labelledby="jobs-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="jobs-title" data-i18n="documents">Documents</h2>
+            <p id="job-summary"></p>
+          </div>
+        </div>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" data-tab="ready" aria-selected="true">
+            <span data-i18n="ready">Ready</span><span class="count" id="ready-count">0</span>
+          </button>
+          <button type="button" role="tab" data-tab="queue" aria-selected="false">
+            <span data-i18n="queue">Queue</span><span class="count" id="queue-count">0</span>
+          </button>
+          <button type="button" role="tab" data-tab="history" aria-selected="false">
+            <span data-i18n="history">History</span><span class="count" id="history-count">0</span>
+          </button>
+        </div>
+        <div class="job-list" id="job-list" role="tabpanel" aria-live="polite"></div>
+      </section>
+    </main>
+    <div class="modal-backdrop" id="test-page-dialog" hidden>
+      <section
+        class="confirm-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="test-page-dialog-title"
+        aria-describedby="test-page-dialog-message"
+      >
+        <h2 id="test-page-dialog-title" data-i18n="printTestPage">Print test page</h2>
+        <p id="test-page-dialog-message" data-i18n="confirmTestPage">
+          Do you want to print a test page?
+        </p>
+        <div class="dialog-actions">
+          <button type="button" class="quiet" id="cancel-test-page" data-i18n="no">No</button>
+          <button type="button" class="primary" id="confirm-test-page" data-i18n="yes">Yes</button>
+        </div>
+      </section>
+    </div>
+    <div class="modal-backdrop" id="delete-file-dialog" hidden>
+      <section
+        class="confirm-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-file-dialog-title"
+        aria-describedby="delete-file-dialog-message"
+      >
+        <h2 id="delete-file-dialog-title" data-i18n="deleteStoredFile">
+          Delete saved file
+        </h2>
+        <p id="delete-file-dialog-message" data-i18n="confirmDeleteFile">
+          Delete this history record? This only removes the file stored by the
+          server; the print history entry will remain.
+        </p>
+        <div class="dialog-actions">
+          <button type="button" class="quiet" id="cancel-delete-file" data-i18n="cancel">
+            Cancel
+          </button>
+          <button type="button" class="primary danger-action" id="confirm-delete-file" data-i18n="deleteFile">
+            Delete
+          </button>
+        </div>
+      </section>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>
