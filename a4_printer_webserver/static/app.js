@@ -138,6 +138,7 @@ const jobList = document.getElementById("job-list");
 const fileInput = document.getElementById("file-input");
 const fileLabel = document.getElementById("file-label");
 const uploadButton = document.getElementById("upload-button");
+const uploadForm = document.getElementById("upload-form");
 const testPageButton = document.getElementById("test-page-button");
 const testPageDialog = document.getElementById("test-page-dialog");
 const confirmTestPageButton = document.getElementById("confirm-test-page");
@@ -374,13 +375,51 @@ fileInput.addEventListener("change", () => {
   fileLabel.textContent = fileInput.files.length ? t("fileSelected", {name: fileInput.files[0].name}) : t("chooseFile");
 });
 
-document.getElementById("upload-form").addEventListener("submit", async (event) => {
+uploadForm.addEventListener("submit", (event) => {
   event.preventDefault();
   if (!fileInput.files.length) return showToast(t("missing_file"), true);
+  uploadFile(fileInput.files[0]);
+});
+
+let dragDepth = 0;
+
+uploadForm.addEventListener("dragenter", (event) => {
+  event.preventDefault();
+  dragDepth += 1;
+  uploadForm.classList.add("dragging");
+});
+
+uploadForm.addEventListener("dragover", (event) => {
+  event.preventDefault();
+});
+
+uploadForm.addEventListener("dragleave", (event) => {
+  event.preventDefault();
+  dragDepth -= 1;
+  if (dragDepth <= 0) {
+    dragDepth = 0;
+    uploadForm.classList.remove("dragging");
+  }
+});
+
+uploadForm.addEventListener("drop", (event) => {
+  event.preventDefault();
+  dragDepth = 0;
+  uploadForm.classList.remove("dragging");
+  const files = event.dataTransfer.files;
+  if (!files.length) return;
+  const transfer = new DataTransfer();
+  transfer.items.add(files[0]);
+  fileInput.files = transfer.files;
+  fileLabel.textContent = t("fileSelected", {name: files[0].name});
+  uploadFile(files[0]);
+});
+
+async function uploadFile(file) {
   uploadButton.disabled = true;
   uploadButton.textContent = t("uploading");
   const body = new FormData();
-  body.append("file", fileInput.files[0]);
+  body.append("file", file);
   try {
     await apiRequest("/api/uploads", {method: "POST", body});
     fileInput.value = "";
@@ -394,7 +433,7 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
     uploadButton.disabled = false;
     uploadButton.textContent = t("upload");
   }
-});
+}
 
 function openTestPageDialog() {
   testPageDialog.hidden = false;

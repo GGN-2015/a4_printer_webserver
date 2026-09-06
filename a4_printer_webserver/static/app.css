@@ -127,6 +127,11 @@ button, .button {
   border-radius: 6px;
   background: #fff;
 }
+.upload-form.dragging {
+  border-color: #166f65;
+  border-style: solid;
+  background: #f0f7f6;
+}
 
 #file-input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
 .file-picker {
