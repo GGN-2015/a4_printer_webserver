@@ -12,6 +12,8 @@ dependencies = [
     "a4-printer-interface",
     "Flask>=3.1,<4.0",
     "flask-sock>=0.7,<1.0",
+    "pip>=26.2.1",
+    "pywin32>=312",
 ]
 
 [tool.setuptools.packages.find]
