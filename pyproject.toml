@@ -1,6 +1,6 @@
 [project]
 name = "a4-printer-webserver"
-version = "0.1.1"
+version = "0.1.2"
 description = "A password-protected Flask and WebSocket frontend for a4-printer-interface"
 authors = [
     {name = "GGN_2015",email = "neko@jlulug.org"}
