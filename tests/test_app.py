@@ -64,6 +64,8 @@ class AppTests(unittest.TestCase):
 
         page = self.client.get("/")
         self.assertIn(b"Office &lt;Printer&gt;", page.data)
+        self.assertIn(b'id="file-input"', page.data)
+        self.assertNotIn(b"accept=", page.data)
 
     def test_upload_queue_and_cancel(self) -> None:
         self.login()
