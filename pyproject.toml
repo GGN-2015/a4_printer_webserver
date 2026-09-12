@@ -1,6 +1,6 @@
 [project]
 name = "a4-printer-webserver"
-version = "0.1.2"
+version = "0.1.3"
 description = "A password-protected Flask and WebSocket frontend for a4-printer-interface"
 authors = [
     {name = "GGN_2015",email = "neko@jlulug.org"}
@@ -13,7 +13,7 @@ dependencies = [
     "Flask>=3.1,<4.0",
     "flask-sock>=0.7,<1.0",
     "pip>=26.2.1",
-    "pywin32>=312"
+    "pywin32>=312",
 ]
 
 [tool.setuptools.packages.find]

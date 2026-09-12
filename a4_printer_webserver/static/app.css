@@ -109,6 +109,18 @@ button, .button {
 .language-switch.compact button { min-height: 38px; }
 
 .workspace { max-width: 1160px; margin: 0 auto; padding: 40px 24px 64px; }
+.printer-warning {
+  margin: 0 0 20px;
+  padding: 10px 12px;
+  border: 1px solid #e6c4c6;
+  border-left: 3px solid #c93840;
+  border-radius: 6px;
+  background: #fff0f1;
+  color: #a32c32;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.printer-warning[hidden] { display: none; }
 .upload-section { padding-bottom: 40px; border-bottom: 1px solid #d8dcdf; }
 .jobs-section { padding-top: 36px; }
 .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 18px; }

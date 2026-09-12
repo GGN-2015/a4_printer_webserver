@@ -63,6 +63,7 @@ const strings = {
     job_file_cannot_be_deleted: "This stored file cannot be deleted.",
     file_missing: "The stored file is missing.",
     invalid_pause_state: "The pause state is invalid.",
+    printerWarning: "The printer was last active at {time}. It has been unused for {duration}. Please check the printer power status and ensure there is enough paper.",
     errorPrefix: "Error: {message}"
   },
   zh: {
@@ -129,6 +130,7 @@ const strings = {
     job_file_cannot_be_deleted: "该后台文件无法删除。",
     file_missing: "服务器中的文件已丢失。",
     invalid_pause_state: "暂停状态无效。",
+    printerWarning: "打印机上次活跃时刻为 {time}，目前已经 {duration} 未使用，请关注线下打印机启动状态，并检查是否有足够的纸张。",
     errorPrefix: "错误：{message}"
   }
 };
@@ -182,6 +184,7 @@ function setLanguage(nextLanguage) {
   updatePrinterStatus(printerStatus);
   updatePauseButton();
   renderJobs();
+  updatePrinterWarning();
 }
 
 function updatePrinterStatus(status) {
@@ -302,6 +305,55 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+function lastSuccessfulPrintTime() {
+  let latest = null;
+  jobs.forEach((job) => {
+    if (job.status !== "completed" || !job.completed_at) return;
+    const timestamp = new Date(job.completed_at).getTime();
+    if (Number.isNaN(timestamp)) return;
+    if (latest === null || timestamp > latest) latest = timestamp;
+  });
+  return latest;
+}
+
+function formatLastActive(timestamp) {
+  const date = new Date(timestamp);
+  if (language === "zh") {
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+  return new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
+}
+
+function formatInactiveDuration(milliseconds) {
+  const totalMinutes = Math.floor(milliseconds / 60000);
+  const days = Math.floor(totalMinutes / 1440);
+  const minutes = totalMinutes - days * 1440;
+  if (language === "zh") return `${days}天 ${minutes}分钟`;
+  return `${days} day${days === 1 ? "" : "s"} ${minutes} minute${minutes === 1 ? "" : "s"}`;
+}
+
+function updatePrinterWarning() {
+  const warning = document.getElementById("printer-warning");
+  const text = document.getElementById("printer-warning-text");
+  const lastPrint = lastSuccessfulPrintTime();
+  if (lastPrint === null || Date.now() - lastPrint <= 10 * 60 * 1000) {
+    warning.hidden = true;
+    return;
+  }
+  text.textContent = t("printerWarning", {
+    time: formatLastActive(lastPrint),
+    duration: formatInactiveDuration(Date.now() - lastPrint)
+  });
+  warning.hidden = false;
+}
+
 async function apiRequest(url, options = {}) {
   const headers = new Headers(options.headers || {});
   if (options.method && options.method !== "GET") headers.set("X-CSRF-Token", csrfToken);
@@ -332,6 +384,7 @@ function connectWebSocket() {
     updatePauseButton();
     jobs = snapshot.jobs;
     renderJobs();
+    updatePrinterWarning();
   });
   socket.addEventListener("close", () => {
     window.setTimeout(connectWebSocket, reconnectDelay);
@@ -545,4 +598,5 @@ function showToast(message, isError = false) {
 }
 
 setLanguage(language);
+window.setInterval(updatePrinterWarning, 60000);
 connectWebSocket();

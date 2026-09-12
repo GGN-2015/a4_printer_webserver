@@ -19,7 +19,7 @@ wheels = [
 
 [[package]]
 name = "a4-printer-webserver"
-version = "0.1.1"
+version = "0.1.3"
 source = { editable = "." }
 dependencies = [
     { name = "a4-printer-interface" },
