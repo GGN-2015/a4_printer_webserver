@@ -334,9 +334,10 @@ function formatLastActive(timestamp) {
 function formatInactiveDuration(milliseconds) {
   const totalMinutes = Math.floor(milliseconds / 60000);
   const days = Math.floor(totalMinutes / 1440);
-  const minutes = totalMinutes - days * 1440;
-  if (language === "zh") return `${days}天 ${minutes}分钟`;
-  return `${days} day${days === 1 ? "" : "s"} ${minutes} minute${minutes === 1 ? "" : "s"}`;
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+  if (language === "zh") return `${days}天 ${hours}小时 ${minutes}分钟`;
+  return `${days} day${days === 1 ? "" : "s"} ${hours} hour${hours === 1 ? "" : "s"} ${minutes} minute${minutes === 1 ? "" : "s"}`;
 }
 
 function updatePrinterWarning() {
